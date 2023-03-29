@@ -1,0 +1,23 @@
+
+# para as dependecias de desevolvimento instalamos com -D
+ex: yarn add nodemon -D
+
+# REST é um modelo de arquitetura
+# API 
+
+# Metodos HTTP
+- get    => pegar as info
+- post   => criar 
+- put    => modificar/actualizar
+- delete => apagar
+- patch  => actualizar algo especifico
+
+
+AVISO: é importante saber que ordem dos parametros de requisoes é sempre assim ((response, request)
+
+# tipos de parametros
+- ROUTES params ->  alterar deletar um dado 
+- QUERY params -> paginacao
+- BODY params -> criacao de dados 
+
+
