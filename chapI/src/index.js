@@ -1,34 +1,30 @@
 
 const express = require('express');
-
+const {v4: uuidv4}= require('uuid');
 const app = express();
 
+const customers = [];
 
-// - get   => pegar as info
-app.get("/courses", (request, response)=>{
- return response.json({message: 'oi'})
-})
+//middleware
+app.use(express.json());
 
-// - post  => criar registro
-app.post("/courses", (request, response)=>{
-    console.log(request.body)
-   return response.json(["oi post"])
-   })
-// - put   => modificar/actualizar
-app.put("/courses/:id", (request, response)=>{
-    return response.json(["oi put"])
-   
-   })
-// - delete => apagar
-app.delete("/courses/:id", (request, response)=>{
-   return response.json(["oi delete"])
-   })
-// - push  => actualizar algo especifico
-app.patch("/courses/:id", (request, response)=>{
-   return response.json(["oi patch"])
-   })
+//create a account route
+app.post('/account',(request, response)=>{
+
+   const {cpf, name}= request.body;
+
+   customers.push({
+      id: uuidv4(),
+      name,
+      cpf,  
+      statement: []
+   });
+
+   console.log("account:", customers);
+   return response.satus(201).send("account created sucessfully!");
+});
 
 //PORTA
 app.listen(3333, ()=>{
-    console.log('server started XD')
+    console.log('server started XD');
 });
