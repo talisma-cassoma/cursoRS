@@ -21,3 +21,10 @@ AVISO: é importante saber que ordem dos parametros de requisoes é sempre assim
 - BODY params -> criacao de dados 
 
 
+regex
+
+arrays
+    : some() -> procura no arr e retorna true/false
+    : find() -> procura no arr e retorna o 1er el que satisfaz a condiçao, sinao retuna indefined
+    : push() -> adiciona el
+
