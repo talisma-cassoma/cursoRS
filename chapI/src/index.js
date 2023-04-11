@@ -24,6 +24,20 @@ function verifyIfExisteCPF(request, response, next){
    return next();
 
 }
+
+function getBalance(statement){
+
+   const balance =statement.reduce((acc, operation)=>{
+    if(operation.type == "credit"){
+      return acc + operation.amount;
+    }
+    else if(operation.type == "debit"){
+      return acc - operation.amount;
+    }
+   }, 0);
+   
+   return balance; 
+}
 //create a account route
 app.post('/account', (request, response) => {
 
@@ -63,13 +77,36 @@ const statementOperation ={
    description,
    amount,
    created_at: new Date(),
-   type: "deposit"
+   type: "credit"
 };
 
 customer.statement.push(statementOperation);
 
 return response.status(201).send();
 
+})
+
+//saque
+app.post("/withdraw", verifyIfExisteCPF, (request, response)=>{
+
+   const {description , amount } =  request.body;
+   const {customer}= request;
+
+   const statementOperation ={
+      description,
+      amount,
+      created_at: new Date(),
+      type: "debit"
+   };
+
+   const balance = getBalance(customer.statement);
+   //console.log(`saldo: ${balance} €`);
+
+   if(balance < amount){ return response.status(401).send();}
+
+   customer.statement.push(statementOperation);
+
+   return response.status(201).send()
 })
 
 //PORTA
