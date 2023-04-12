@@ -9,12 +9,12 @@ const customers = [];
 app.use(express.json());
 
 //verify 
-function verifyIfExisteCPF(request, response, next){
+function verifyIfExisteCPF(request, response, next) {
 
-   const{ cpf } = request.headers;
-   const customer = customers.find((customer)=> customer.cpf === cpf);
-   
-   if(!customer){
+   const { cpf } = request.headers;
+   const customer = customers.find((customer) => customer.cpf === cpf);
+
+   if (!customer) {
       return response.status(400).send("account not found!")
    }
 
@@ -25,18 +25,18 @@ function verifyIfExisteCPF(request, response, next){
 
 }
 
-function getBalance(statement){
+function getBalance(statement) {
 
-   const balance =statement.reduce((acc, operation)=>{
-    if(operation.type == "credit"){
-      return acc + operation.amount;
-    }
-    else if(operation.type == "debit"){
-      return acc - operation.amount;
-    }
+   const balance = statement.reduce((acc, operation) => {
+      if (operation.type == "credit") {
+         return acc + operation.amount;
+      }
+      else if (operation.type == "debit") {
+         return acc - operation.amount;
+      }
    }, 0);
-   
-   return balance; 
+
+   return balance;
 }
 //create a account route
 app.post('/account', (request, response) => {
@@ -62,37 +62,37 @@ app.post('/account', (request, response) => {
 });
 
 //show statement 
-app.get("/statement", verifyIfExisteCPF, (request, resposne)=>{
-const { customer } = request;
+app.get("/statement", verifyIfExisteCPF, (request, resposne) => {
+   const { customer } = request;
 
    return resposne.json(customer.statement);
 })
 
 //deposit
-app.post("/deposit", verifyIfExisteCPF, (request, response)=>{
-const { description, amount} = request.body;
-const {customer} = request;
+app.post("/deposit", verifyIfExisteCPF, (request, response) => {
+   const { description, amount } = request.body;
+   const { customer } = request;
 
-const statementOperation ={
-   description,
-   amount,
-   created_at: new Date(),
-   type: "credit"
-};
+   const statementOperation = {
+      description,
+      amount,
+      created_at: new Date(),
+      type: "credit"
+   };
 
-customer.statement.push(statementOperation);
+   customer.statement.push(statementOperation);
 
-return response.status(201).send();
+   return response.status(201).send();
 
 })
 
 //saque
-app.post("/withdraw", verifyIfExisteCPF, (request, response)=>{
+app.post("/withdraw", verifyIfExisteCPF, (request, response) => {
 
-   const {description , amount } =  request.body;
-   const {customer}= request;
+   const { description, amount } = request.body;
+   const { customer } = request;
 
-   const statementOperation ={
+   const statementOperation = {
       description,
       amount,
       created_at: new Date(),
@@ -102,11 +102,45 @@ app.post("/withdraw", verifyIfExisteCPF, (request, response)=>{
    const balance = getBalance(customer.statement);
    //console.log(`saldo: ${balance} €`);
 
-   if(balance < amount){ return response.status(401).send();}
+   if (balance < amount) { return response.status(401).send(); }
 
    customer.statement.push(statementOperation);
 
    return response.status(201).send()
+})
+
+//show statement 
+app.get("/statement/date", verifyIfExisteCPF, (request, resposne) => {
+   const { customer } = request;
+   const { date } = request.query
+
+   const dateFormat = new Date(date + " 00:00")
+
+   const statement = customer.statement.filter(
+      (operation) => 
+         operation.created_at.toDateString() === 
+         new Date(dateFormat).toDateString()
+   )
+
+   return resposne.json(statement)
+})
+
+//UPAGRADE ACC INFOS
+app.put("/account", verifyIfExisteCPF, (request, response)=>{
+
+   const { customer} = request;
+   const { name } = request.body;
+   
+   customer.name = name;
+
+   return response.status(201).send();
+})
+
+//get account info
+app.get("/account", verifyIfExisteCPF, (request, response)=>{
+   const {customer}= request;
+
+   return response.json(customer);
 })
 
 //PORTA
