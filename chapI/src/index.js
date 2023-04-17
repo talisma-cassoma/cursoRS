@@ -128,7 +128,7 @@ app.get("/statement/date", verifyIfExisteCPF, (request, resposne) => {
 //UPAGRADE ACC INFOS
 app.put("/account", verifyIfExisteCPF, (request, response)=>{
 
-   const { customer} = request;
+   const { customer } = request;
    const { name } = request.body;
    
    customer.name = name;
@@ -143,6 +143,21 @@ app.get("/account", verifyIfExisteCPF, (request, response)=>{
    return response.json(customer);
 })
 
+app.delete("/delete", verifyIfExisteCPF, (request, response)=>{
+   const { customer }= request;
+
+   customers.splice(customer, 1);
+
+   return response.status(201).send();
+})
+
+app.get("/balance", verifyIfExisteCPF, (request, response)=>{
+   const { customer } = request;
+   
+   const balance = getBalance(customer.statement);
+
+   return response.json({"balance": balance});
+})
 //PORTA
 app.listen(3333, () => {
    console.log('server started XD');

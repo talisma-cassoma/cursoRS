@@ -29,4 +29,5 @@ arrays
     : push() -> adiciona el
     : reduce(callbackFn(accumulator, currentValue))
       reduce(callbackFn(accumulator, currentValue), initialValue) ->  
+    : splice()
 
